@@ -1,5 +1,4 @@
 var mongoose = require('mongoose'),
-	extend = require('mongoose-schema-extend'),
     token = require('./token')
     Schema = mongoose.Schema,
     Strategy = require('../lib/strategy'),
