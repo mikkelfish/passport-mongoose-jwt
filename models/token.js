@@ -12,7 +12,7 @@ module.exports = exports = function tokenPlugin (schema, options) {
     }
     schema.statics.decodeToken = function(token, callback){
         jwt.verify(token, tokenSecret, function(err, decoded) {
-            callback(err, decoded);
+            callback(null, decoded, err);
         });
     }
 

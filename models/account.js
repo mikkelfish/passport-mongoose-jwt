@@ -76,10 +76,14 @@ var accountPlugin = function(schema, options){
 
 	schema.statics.tokenAuthenticate = function(token, callback){
 		var self = this;
-		return self.decodeToken(token, function(err, user){
+		return self.decodeToken(token, function(err, user, message){
 
 			if(err){
-				return callback(err); //this error will occur if token can't be decoded
+				return callback(err); //this error will occur if there is an internal token error
+			}
+			
+			if(message){
+				return callback(null, null, message); //this error will occur if token can't be decoded
 			}
 
             self.findOne({username: user.username}, function (err, user) {
@@ -91,18 +95,17 @@ var accountPlugin = function(schema, options){
 					return callback(null, null,  {message: 'User does not exist.'}); //this error will occur if user can't be found
 				}
 
-				if (user.token != token) {
+				if (user.token == undefined || user.token == null || user.token != token) {
 					return callback(null, null, {message: 'Token does not exist or does not match. Request a new token.'});
 				}
 				return callback(null, user);
 			});
-            console.log('skip');
 		});
 	}
 
 	schema.statics.invalidateToken = function(username, cb) {
 		var self = this;
-		this.findOne({username: username}, function(err, usr) {
+		self.findOne({username: username}, function(err, usr) {
 			if(err || !usr) {
 				cb(err, null);
 			}
@@ -126,8 +129,4 @@ var accountPlugin = function(schema, options){
 	
 
 module.exports.Plugin = accountPlugin;
-
-var account = new Schema();
-account.plugin(accountPlugin);
-module.exports.Account =  mongoose.model('Account', account);
 

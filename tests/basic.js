@@ -4,8 +4,8 @@ var BadRequestError = require('../lib/badrequesterror');
 var Strategy = require('../lib/strategy');
 var assert = require('assert');
 var expect = require('chai').expect;
-var Account = require('../models/account').Account;
-var mongotest = require('./mongotest')
+var mongotest = require('./mongotest');
+var plugin = require('../models/account').Plugin;
 
 var setPasswordAndAuthenticate = function (user, passwordToSet, passwordToAuthenticate, cb) {
     user.setPassword(passwordToSet, function (err) {
@@ -16,6 +16,10 @@ var setPasswordAndAuthenticate = function (user, passwordToSet, passwordToAuthen
         user.authenticate(passwordToAuthenticate, cb);
     });
 };
+
+var accountSchema = new Schema();
+accountSchema.plugin(plugin);
+var Account =  mongoose.model('Account', accountSchema);
 
 describe('passport-mongoose-jwt', function () {
     describe('#token-plugin()', function () {
@@ -115,8 +119,8 @@ describe('passport-mongoose-jwt', function () {
                     Account.authenticate()('user', 'password', function (err, result) {
                         Account.createToken(result.username, {test:"testmessage"}, 0.001, function(err, token){
                             assert.ok(token != undefined);
-                            Account.decodeToken(token, function(err, decoded){
-                                assert.ok(err != undefined);
+                            Account.decodeToken(token, function(err, decoded, msg){
+                                assert.ok(msg != undefined);
                                 assert.ok(decoded === undefined);
                                 done();
                             });
@@ -163,9 +167,11 @@ describe('passport-mongoose-jwt', function () {
                         Account.createToken(result.username, {username:result.username}, 5000, function(err, token){
                             assert.ok(token != undefined);
                             Account.invalidateToken(result.username, function(err, msg) {
-                                Account.tokenAuthenticate(token, function (err, user) {
-                                    assert.ok(err != undefined);
-                                    assert.ok(user == null);
+								assert.ifError(err);
+                                Account.tokenAuthenticate(token, function (err, puser, msg) {
+									assert.ifError(err);
+                                    assert.ok(msg != null);
+                                    assert.ok(puser == null);
                                     done();
                                 });
                             });
@@ -187,8 +193,8 @@ describe('passport-mongoose-jwt', function () {
                     Account.authenticate()('user', 'password', function (err, result) {
                         Account.createToken(result.username, {username:result.username}, 0.0001, function(err, token){
                             assert.ok(token != undefined);
-                                Account.tokenAuthenticate(token, function (err, user) {
-                                    assert.ok(err != undefined);
+                                Account.tokenAuthenticate(token, function (err, user, msg) {
+                                    assert.ok(msg != undefined);
                                     assert.ok(user == null);
                                     done();
                                 });
