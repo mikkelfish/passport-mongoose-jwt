@@ -1,0 +1,38 @@
+{
+  "name": "passport-mongoose-jwt",
+  "description": "Passport strategy built on passport-mongoose that implements JWT authentication",
+  "version": "0.0.1",
+  "author": {
+    "name": "Mikkel Fishman",
+    "email": "mikkel@peregrinescientific.co.nz"
+  },
+  "dependencies": {
+      "mongoose": "*",
+      "mongodb": "*",
+      "passport":"*",
+      "passport-local":"*",
+      "passport-local-mongoose": "*",
+      "connect-flash":"*",
+      "underscore":"*",
+      "jsonwebtoken":"*"
+  },
+  "devDependencies": {
+      "vows": "0.5.x",
+      "mocha": "*",
+      "should": "*",
+      "chai": "1.9.x"
+  },
+  "keywords": [
+    "authentication",
+    "authentication",
+    "jwt",
+    "passport",
+    "mongoose",
+    "rest",
+    "restful"
+  ],
+  "engine": "node >= 0.6.6",
+    "scripts": {
+        "test": "mocha -R spec tests/"
+    }
+}
