@@ -24,12 +24,9 @@
   },
   "keywords": [
     "authentication",
-    "authentication",
     "jwt",
     "passport",
-    "mongoose",
-    "rest",
-    "restful"
+    "mongoose"
   ],
   "engine": "node >= 0.6.6",
     "scripts": {
